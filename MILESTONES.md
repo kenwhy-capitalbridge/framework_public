@@ -14,7 +14,24 @@ git checkout main
 
 ---
 
-## v1.0.0 — Capital Bridge Advisory Platform (current)
+## v1.0.1 — Link updates + favicon (current)
+
+**Tag:** `v1.0.1`  
+**Date:** 2025-03-06
+
+**Restore point:** v1.0.0 plus:
+- Income Engineering Model → incomeengineering.thecapitalbridge.com
+- Capital Stress Model → capitalstress.thecapitalbridge.com
+- Favicon (lion icon) added and linked
+
+**Restore to this version:**
+```bash
+git checkout v1.0.1
+```
+
+---
+
+## v1.0.0 — Capital Bridge Advisory Platform
 
 **Tag:** `v1.0.0`  
 **Date:** 2025-03-06
