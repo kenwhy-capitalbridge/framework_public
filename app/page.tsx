@@ -57,6 +57,9 @@ export default async function AdvisoryDashboardPage() {
         >
           <header
             style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 10,
               padding: "1rem 1.25rem 0.5rem",
               borderBottom: "1px solid rgba(255,204,106,0.25)",
               display: "flex",
@@ -65,6 +68,7 @@ export default async function AdvisoryDashboardPage() {
               maxWidth: 1200,
               margin: "0 auto",
               width: "100%",
+              backgroundColor: "#0D3A1D",
             }}
           >
             <div>
@@ -107,18 +111,22 @@ export default async function AdvisoryDashboardPage() {
                 padding: "0 1rem",
               }}
             >
-              <iframe
-                src="/advisory-tools.html"
-                title="Capital Bridge Advisory Framework"
+              <div
                 style={{
                   width: "100%",
                   minHeight: "80vh",
                   border: "1px solid rgba(255,204,106,0.35)",
                   borderRadius: 12,
-                  overflow: "hidden",
                   backgroundColor: "#0D3A1D",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "rgba(246,245,241,0.9)",
+                  fontSize: "1rem",
                 }}
-              />
+              >
+                Advisory tools content
+              </div>
             </div>
           </section>
         </div>

@@ -8,6 +8,21 @@ export async function middleware(req: NextRequest) {
   const isProtectedRoute =
     url.pathname === "/" || url.pathname.startsWith("/dashboard");
 
+  // Skip auth redirect on localhost so you can develop; production login
+  // cookies (login.thecapitalbridge.com) are not sent to localhost (cross-origin).
+  const host = req.headers.get("host") ?? "";
+  const hostname = url.hostname ?? "";
+  const isLocalDev =
+    host.startsWith("localhost") ||
+    host.startsWith("127.0.0.1") ||
+    host.startsWith("0.0.0.0") ||
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "0.0.0.0";
+  if (isLocalDev) {
+    return res;
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 

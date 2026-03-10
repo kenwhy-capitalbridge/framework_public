@@ -1,49 +1,49 @@
-\"use client\";
+"use client";
 
-import { useEffect, useState } from \"react\";
+import { useEffect, useState } from "react";
 
 type PaymentState =
-  | { status: \"idle\" }
-  | { status: \"creating\" }
-  | { status: \"ready\"; checkoutUrl: string }
-  | { status: \"error\"; message: string };
+  | { status: "idle" }
+  | { status: "creating" }
+  | { status: "ready"; checkoutUrl: string }
+  | { status: "error"; message: string };
 
 export function PaymentGate({ userId }: { userId: string | null }) {
-  const [state, setState] = useState<PaymentState>({ status: \"idle\" });
+  const [state, setState] = useState<PaymentState>({ status: "idle" });
 
   useEffect(() => {
-    if (!userId || state.status !== \"idle\") return;
+    if (!userId || state.status !== "idle") return;
 
     const createBill = async () => {
       try {
-        setState({ status: \"creating\" });
+        setState({ status: "creating" });
 
         const baseUrl =
           process.env.NEXT_PUBLIC_LOGIN_APP_URL ??
-          \"https://login.thecapitalbridge.com\";
+          "https://login.thecapitalbridge.com";
 
         const resp = await fetch(`${baseUrl}/api/create-bill`, {
-          method: \"POST\",
-          headers: { \"Content-Type\": \"application/json\" },
-          credentials: \"include\",
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ userId }),
         });
 
         if (!resp.ok) {
-          throw new Error(\"Unable to create payment link\");
+          throw new Error("Unable to create payment link");
         }
 
         const data = (await resp.json()) as { checkoutUrl?: string };
 
         if (!data.checkoutUrl) {
-          throw new Error(\"Payment link missing from response\");
+          throw new Error("Payment link missing from response");
         }
 
-        setState({ status: \"ready\", checkoutUrl: data.checkoutUrl });
+        setState({ status: "ready", checkoutUrl: data.checkoutUrl });
       } catch (err: unknown) {
         const message =
-          err instanceof Error ? err.message : \"Something went wrong\";
-        setState({ status: \"error\", message });
+          err instanceof Error ? err.message : "Something went wrong";
+        setState({ status: "error", message });
       }
     };
 
@@ -54,40 +54,40 @@ export function PaymentGate({ userId }: { userId: string | null }) {
     <div
       style={{
         maxWidth: 640,
-        margin: \"3rem auto\",
-        padding: \"2rem 1.5rem\",
+        margin: "3rem auto",
+        padding: "2rem 1.5rem",
         borderRadius: 12,
-        border: \"1px solid rgba(255,204,106,0.4)\",
+        border: "1px solid rgba(255,204,106,0.4)",
         background:
-          \"radial-gradient(circle at top, rgba(255,204,106,0.15), transparent 55%) #0D3A1D\",
+          "radial-gradient(circle at top, rgba(255,204,106,0.15), transparent 55%) #0D3A1D",
       }}
     >
       <p
         style={{
-          fontSize: \"0.7rem\",
-          letterSpacing: \"0.18em\",
-          textTransform: \"uppercase\",
-          color: \"rgba(255,204,106,0.85)\",
-          marginBottom: \"0.75rem\",
+          fontSize: "0.7rem",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "rgba(255,204,106,0.85)",
+          marginBottom: "0.75rem",
         }}
       >
         Access Required
       </p>
       <h1
         style={{
-          fontFamily: \"Roboto Serif, system-ui, -apple-system, BlinkMacSystemFont, serif\",
-          fontSize: \"1.6rem\",
-          margin: \"0 0 0.75rem\",
+          fontFamily: "Roboto Serif, system-ui, -apple-system, BlinkMacSystemFont, serif",
+          fontSize: "1.6rem",
+          margin: "0 0 0.75rem",
         }}
       >
         Activate Capital Bridge Advisory Platform
       </h1>
       <p
         style={{
-          fontSize: \"0.95rem\",
-          color: \"rgba(246,245,241,0.85)\",
+          fontSize: "0.95rem",
+          color: "rgba(246,245,241,0.85)",
           lineHeight: 1.6,
-          marginBottom: \"1.25rem\",
+          marginBottom: "1.25rem",
         }}
       >
         Your login is recognised, but there is no active advisory membership on
@@ -95,24 +95,24 @@ export function PaymentGate({ userId }: { userId: string | null }) {
         Framework and its analytical engines.
       </p>
 
-      {state.status === \"creating\" && (
+      {state.status === "creating" && (
         <p
           style={{
-            fontSize: \"0.85rem\",
-            color: \"rgba(246,245,241,0.8)\",
-            marginBottom: \"1rem\",
+            fontSize: "0.85rem",
+            color: "rgba(246,245,241,0.8)",
+            marginBottom: "1rem",
           }}
         >
           Preparing your secure payment link\u2026
         </p>
       )}
 
-      {state.status === \"error\" && (
+      {state.status === "error" && (
         <p
           style={{
-            fontSize: \"0.85rem\",
-            color: \"#ffb3b3\",
-            marginBottom: \"1rem\",
+            fontSize: "0.85rem",
+            color: "#ffb3b3",
+            marginBottom: "1rem",
           }}
         >
           We couldn&apos;t prepare the payment link automatically. Please try
@@ -121,37 +121,37 @@ export function PaymentGate({ userId }: { userId: string | null }) {
       )}
 
       <button
-        type=\"button\"
-        disabled={state.status === \"creating\" || state.status === \"idle\"}
+        type="button"
+        disabled={state.status === "creating" || state.status === "idle"}
         onClick={() => {
-          if (state.status === \"ready\") {
+          if (state.status === "ready") {
             window.location.href = state.checkoutUrl;
           }
         }}
         style={{
-          display: \"inline-flex\",
-          alignItems: \"center\",
-          justifyContent: \"center\",
-          padding: \"0.85rem 1.6rem\",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "0.85rem 1.6rem",
           borderRadius: 999,
-          border: \"1px solid rgba(255,204,106,0.9)\",
+          border: "1px solid rgba(255,204,106,0.9)",
           background:
-            state.status === \"ready\"
-              ? \"#FFCC6A\"
-              : \"rgba(255,204,106,0.25)\",
-          color: \"#0D3A1D\",
-          fontSize: \"0.82rem\",
+            state.status === "ready"
+              ? "#FFCC6A"
+              : "rgba(255,204,106,0.25)",
+          color: "#0D3A1D",
+          fontSize: "0.82rem",
           fontWeight: 700,
-          letterSpacing: \"0.12em\",
-          textTransform: \"uppercase\",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
           cursor:
-            state.status === \"ready\" ? \"pointer\" : \"not-allowed\",
-          opacity: state.status === \"ready\" ? 1 : 0.7,
+            state.status === "ready" ? "pointer" : "not-allowed",
+          opacity: state.status === "ready" ? 1 : 0.7,
         }}
       >
-        {state.status === \"ready\"
-          ? \"Proceed to Secure Payment\"
-          : \"Preparing Payment\"}
+        {state.status === "ready"
+          ? "Proceed to Secure Payment"
+          : "Preparing Payment"}
       </button>
     </div>
   );
