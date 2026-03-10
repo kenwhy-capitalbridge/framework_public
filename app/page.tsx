@@ -1,3 +1,12 @@
-export default function RootPage() {
-  return <div>Platform Alive</div>;
+import { redirect } from "next/navigation";
+import { getServerUser } from "@/lib/auth";
+
+export default async function Page() {
+  const user = await getServerUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
+  redirect("/login");
 }
