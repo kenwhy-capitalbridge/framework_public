@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const supabaseUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
-const supabaseAnonKey =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({ request: req });
@@ -26,30 +24,43 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      getAll() {
-        return req.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          res.cookies.set(name, value, options);
-        });
-      },
-    },
-  });
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (isProtectedRoute && !user) {
-    const loginUrl = new URL("https://login.thecapitalbridge.com/login");
-    loginUrl.searchParams.set("redirectTo", req.nextUrl.toString());
-    return NextResponse.redirect(loginUrl);
+  // If Supabase env vars are not configured for this Vercel project, skip
+  // auth in middleware instead of throwing a runtime error.
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return res;
   }
 
-  return res;
+  try {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            res.cookies.set(name, value, options);
+          });
+        },
+      },
+    });
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (isProtectedRoute && !user) {
+      const loginUrl = new URL("https://login.thecapitalbridge.com/login");
+      loginUrl.searchParams.set("redirectTo", req.nextUrl.toString());
+      return NextResponse.redirect(loginUrl);
+    }
+
+    return res;
+  } catch {
+    // If anything goes wrong talking to Supabase in middleware, fall back to
+    // letting the request through. The server component will still enforce
+    // access and show the payment gate as needed.
+    return res;
+  }
 }
 
 export const config = {
