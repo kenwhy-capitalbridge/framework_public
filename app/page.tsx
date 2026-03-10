@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { PaymentGate } from "./components/PaymentGate";
 
@@ -54,6 +56,14 @@ async function getUserAndMembership() {
 
 export default async function AdvisoryDashboardPage() {
   const { user, membership } = await getUserAndMembership();
+
+  if (!user) {
+    const h = await headers();
+    const host = h.get("host") ?? "platform.thecapitalbridge.com";
+    const loginUrl = new URL("https://login.thecapitalbridge.com/login");
+    loginUrl.searchParams.set("redirectTo", `https://${host}`);
+    redirect(loginUrl.toString());
+  }
 
   const now = new Date();
   const isActive =

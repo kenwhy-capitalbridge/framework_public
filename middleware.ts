@@ -1,65 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-export async function middleware(req: NextRequest) {
-  try {
-    let res = NextResponse.next({ request: req });
-    const url = req.nextUrl.clone();
-    const isProtectedRoute =
-      url.pathname === "/" || url.pathname.startsWith("/dashboard");
-
-    const host = req.headers.get("host") ?? "";
-    const hostname = url.hostname ?? "";
-    const isLocalDev =
-      host.startsWith("localhost") ||
-      host.startsWith("127.0.0.1") ||
-      host.startsWith("0.0.0.0") ||
-      hostname === "localhost" ||
-      hostname === "127.0.0.1" ||
-      hostname === "0.0.0.0";
-    if (isLocalDev) {
-      return res;
-    }
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return res;
-    }
-
-    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-      cookies: {
-        getAll() {
-          return req.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            res.cookies.set(name, value, options ?? {});
-          });
-        },
-      },
-    });
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (isProtectedRoute && !user) {
-      const loginUrl = new URL("https://login.thecapitalbridge.com/login");
-      loginUrl.searchParams.set("redirectTo", req.nextUrl.toString());
-      return NextResponse.redirect(loginUrl);
-    }
-
-    return res;
-  } catch {
-    // Any failure in middleware: allow request through; page will handle auth.
-    return NextResponse.next();
-  }
+/**
+ * Middleware does not use Supabase (avoids Edge runtime issues on Vercel).
+ * Auth and redirect-to-login are handled in the server component (app/page.tsx).
+ */
+export async function middleware(_req: NextRequest) {
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|assets|public).*)"],
 };
-
