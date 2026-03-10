@@ -1,6 +1,4 @@
-import { cookies } from "next/headers";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { Database } from "../types/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { PaymentGate } from "./components/PaymentGate";
 
 type Membership =
@@ -19,8 +17,23 @@ async function getUserAndMembership() {
     return { user: null, membership: null as Membership };
   }
 
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
+  const devUserId =
+    process.env.NODE_ENV !== "production"
+      ? process.env.NEXT_PUBLIC_DEV_USER_ID
+      : undefined;
+
+  const supabase = await createClient();
+
+  if (devUserId) {
+    const { data: membership } = await supabase
+      .from("active_memberships")
+      .select("user_id, plan, start_date, end_date")
+      .eq("user_id", devUserId)
+      .maybeSingle();
+
+    const user = { id: devUserId, email: "dev-user@example.com" } as { id: string; email: string };
+    return { user, membership: (membership as Membership) ?? null };
+  }
 
   const {
     data: { user },
