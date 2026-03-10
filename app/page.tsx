@@ -2,7 +2,12 @@ import { redirect } from "next/navigation";
 import { getServerUser } from "@/lib/auth";
 
 export default async function Page() {
-  const user = await getServerUser();
+  let user = null;
+  try {
+    user = await getServerUser();
+  } catch {
+    redirect("/login");
+  }
 
   if (user) {
     redirect("/dashboard");

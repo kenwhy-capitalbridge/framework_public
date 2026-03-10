@@ -9,23 +9,28 @@ export type Membership = {
 
 /**
  * Returns the current user or null. Use on root page for session-only redirect.
+ * Never throws: returns null on any error so the page can safely redirect to login.
  */
 export async function getServerUser(): Promise<{ id: string; email?: string } | null> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseAnonKey) return null;
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseAnonKey) return null;
 
-  const devUserId =
-    process.env.NODE_ENV !== "production"
-      ? process.env.NEXT_PUBLIC_DEV_USER_ID
-      : undefined;
-  if (devUserId) {
-    return { id: devUserId, email: "dev-user@example.com" };
+    const devUserId =
+      process.env.NODE_ENV !== "production"
+        ? process.env.NEXT_PUBLIC_DEV_USER_ID
+        : undefined;
+    if (devUserId) {
+      return { id: devUserId, email: "dev-user@example.com" };
+    }
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    return user ?? null;
+  } catch {
+    return null;
   }
-
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  return user ?? null;
 }
 
 /**
