@@ -5,7 +5,10 @@
 The app allows iframe embedding **only** from:
 
 - `https://thecapitalbridge.com`
-- `https://*.thecapitalbridge.com` (all subdomains, e.g. www, marketing, etc.)
+- `https://*.thecapitalbridge.com` (all subdomains)
+- `https://cms.sitehub.io` (Jetsite/SiteJet builder)
+- `https://preview.sitehub.io` (Jetsite/SiteJet preview)
+- `https://*.sitehub.io` (other sitehub subdomains)
 
 All other origins are blocked from embedding the app.
 
