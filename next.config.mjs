@@ -11,7 +11,7 @@ const nextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' https://thecapitalbridge.com https://www.thecapitalbridge.com",
+            value: "frame-ancestors 'self' https://thecapitalbridge.com https://*.thecapitalbridge.com",
           },
         ],
       },
