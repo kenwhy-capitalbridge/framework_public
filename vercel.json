@@ -3,6 +3,9 @@
   "buildCommand": "next build",
   "outputDirectory": "out",
   "framework": "nextjs",
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
