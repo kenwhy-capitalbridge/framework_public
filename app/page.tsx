@@ -75,7 +75,7 @@ export default function Page() {
                     STATUS: AVAILABLE • MODULE 1
                   </span>
                   <span className="cb-module-engine-label">Decision Engine</span>
-                  <h2>Income Sustainability</h2>
+                  <h2>Income Durability</h2>
                   <p className="cb-module-why">
                     Evaluates whether your income structure can remain
                     sustainable indefinitely without eroding capital.
