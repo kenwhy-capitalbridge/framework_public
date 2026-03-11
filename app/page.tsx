@@ -1,15 +1,10 @@
-import { redirect } from "next/navigation";
-import { getServerUser } from "@/lib/auth";
-
-/**
- * Root index (/) — after login, shows Capital Bridge Advisory Framework (desktop-style).
- */
-export default async function Page() {
-  const user = await getServerUser();
-  if (!user) {
-    redirect("/login");
-  }
-
+/** Static landing for iframe on thecapitalbridge.com */
+export default function Page() {
+  const arrow = (
+    <svg viewBox="0 0 24 24" aria-hidden>
+      <path d="M7 10l5 5 5-5z" fill="currentColor" />
+    </svg>
+  );
   return (
     <main className="cb-framework">
       <header className="cb-hero">
@@ -36,16 +31,6 @@ export default async function Page() {
             enabling structured capital decision-making.
           </p>
 
-          <div className="cb-workflow-bar" aria-hidden="true">
-            <span className="cb-workflow-line" />
-            <span className="cb-workflow-node is-active" />
-            <span className="cb-workflow-line" />
-            <span className="cb-workflow-node" />
-            <span className="cb-workflow-line" />
-            <span className="cb-workflow-node" />
-            <span className="cb-workflow-line" />
-          </div>
-
           <div className="cb-flow-wrap">
             <div className="cb-flow-grid">
               <div className="cb-flow-cell">
@@ -67,21 +52,9 @@ export default async function Page() {
               <span className="cb-flow-connector-seg" />
             </div>
             <div className="cb-flow-indicators" aria-hidden="true">
-              <span className="cb-flow-indicator">
-                <svg viewBox="0 0 24 24">
-                  <path d="M7 10l5 5 5-5z" />
-                </svg>
-              </span>
-              <span className="cb-flow-indicator">
-                <svg viewBox="0 0 24 24">
-                  <path d="M7 10l5 5 5-5z" />
-                </svg>
-              </span>
-              <span className="cb-flow-indicator">
-                <svg viewBox="0 0 24 24">
-                  <path d="M7 10l5 5 5-5z" />
-                </svg>
-              </span>
+              <span className="cb-flow-indicator">{arrow}</span>
+              <span className="cb-flow-indicator">{arrow}</span>
+              <span className="cb-flow-indicator">{arrow}</span>
             </div>
           </div>
 
